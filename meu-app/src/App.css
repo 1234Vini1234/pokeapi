@@ -1,0 +1,187 @@
+/* ====== BASE ====== */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', Arial, sans-serif;
+  background: linear-gradient(135deg, hsl(270, 2%, 25%)0%, #122b9e 100%);
+  background-attachment: fixed;
+  background-size: cover;
+  color: #222;
+  animation: gradientMove 10s ease infinite;
+}
+
+/* Animação de fundo (degradê em movimento suave) */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ====== CONTAINER PRINCIPAL ====== */
+.container {
+  max-width: 1000px;
+  min-height: 80vh;
+  margin: 60px auto;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 24px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  transition: transform 0.4s ease;
+}
+
+.container:hover {
+  transform: scale(1.01);
+}
+
+/* ====== TÍTULO ====== */
+h1 {
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 32px;
+  font-size: 2.6rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(233, 16, 16, 0.829), 0 0 20px rgba(25, 118, 210, 0.4);
+  position: relative;
+  animation: titlePulse 3s infinite ease-in-out;
+}
+
+@keyframes titlePulse {
+  0%, 100% { text-shadow: 0 0 10px rgba(62, 22, 209, 0.7), 0 0 20px rgba(25,118,210,0.4); }
+  50% { text-shadow: 0 0 20px rgb(173, 130, 130), 0 0 40px rgba(25,118,210,0.8); }
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #00ff6a, #0a0ef1);
+}
+
+/* ====== INPUT ====== */
+input[type="text"] {
+  border: 2px solid #411ddd; /* verde vibrante */
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  width: 100%;
+  margin-bottom: 32px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  box-shadow: 0 0 6px rgba(37, 230, 12, 0.4);
+}
+
+/* 💥 Quando o usuário clica (foco) */
+input[type="text"]:focus {
+  border-color: #1100ff;
+  box-shadow:
+    0 0 5px #00ff33,
+    0 0 10px #00ff33,
+    0 0 20px rgba(0, 255, 51, 0.8);
+  background: rgba(0, 255, 51, 0.1);
+  animation: pulseGlow 1.5s infinite alternate;
+}
+
+/* ✨ Animação do brilho pulsante */
+@keyframes pulseGlow {
+  from {
+    box-shadow:
+      0 0 5px #00ff33,
+      0 0 10px #00ff33,
+      0 0 20px rgba(0, 4, 255, 0.8);
+  }
+  to {
+    box-shadow:
+      0 0 12px #00ff33,
+      0 0 20px #00ff33,
+      0 0 50px rgb(0, 4, 255);
+  }
+}
+
+input[type="text"]:focus {
+  border-color: #3700ff;
+  box-shadow: 0 0 12px rgba(55, 0, 255, 0.589);
+}
+
+/* ====== LISTA DE POKÉMON ====== */
+.pokemon-list {
+
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pokemon-card:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(255,23,68,0.4);
+  background: linear-gradient(180deg, #e3f2fd 0%, #fff 100%);
+}
+
+/* ====== IMAGEM ====== */
+.pokemon-card img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 3px 8px rgb(0, 0, 0));
+  transition: transform 0.3s ease;
+}
+
+.pokemon-card:hover img {
+  transform: scale(1.15) rotate(-2deg);
+}
+
+/* ====== TEXTO ====== */
+.pokemon-card p {
+  margin: 4px 0;
+  font-size: 1rem;
+  color: #333;
+  text-shadow: 0 0 4px rgb(255, 255, 255);
+}
+
+.pokemon-card p:first-of-type {
+  font-weight: bold;
+  text-transform: capitalize;
+  color: #1b80e4;
+  font-size: 1.1rem;
+}
+
+/* ====== RESPONSIVO ====== */
+@media (max-width: 900px) {
+  .container {
+    padding: 24px;
+  }
+  .pokemon-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  h1 {
+    font-size: 1.8rem;
+  }
+}
+@keyframes holographic {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.holo-effect {
+  background: linear-gradient(270deg, #ffd700, #f717a1, #1e90ff, #32cd32);
+  background-size: 800% 800%;
+  animation: holographic 6s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
