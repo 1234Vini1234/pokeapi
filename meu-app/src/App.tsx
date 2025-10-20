@@ -108,7 +108,8 @@ const App: React.FC = () => {
       padding: '26px', textAlign: 'center' }}>
 
 
-      <h1>Pokédex de Malandro</h1>
+      <h1>Pokédex </h1>
+     
 
       <SearchBar onSearch={setSearch} />
       <FiltroTipo tipoSelecionado={tipoSelecionado} onTipoChange={setTipoSelecionado} />

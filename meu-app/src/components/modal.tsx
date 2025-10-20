@@ -16,7 +16,7 @@ const Detalhes: React.FC<DetalhesProps> = ({ pokemon, onClose }) => {
         left: 0,
         right: 0,
         bottom: 0,
-        background: 'linear-gradient(135deg, #ffffffff, #e11d48)',
+        background: 'linear-gradient(135deg, #ffffffff, #ffffffff)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
