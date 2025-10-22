@@ -3,10 +3,8 @@ import SearchBar from './components/busca'
 import PokemonList from './components/lista'
 import Detalhes from './components/modal'
 import FiltroTipo from './components/filtro'
-import './app.css';
-import ModalContent from './components/detalhes';
-
-
+import './app.css'
+import ModalContent from './components/detalhes'
 
 type NameUrl = { name: string; url: string }
 
@@ -17,7 +15,7 @@ const App: React.FC = () => {
   const [search, setSearch] = useState('')
   const [selectedPokemon, setSelectedPokemon] = useState<any | null>(null)
   const [error, setError] = useState('')
-  const [pageSize, setPageSize] = useState(20)
+  const [pageSize, setPageSize] = useState(40)
   const [loading, setLoading] = useState(false)
   const [tipoSelecionado, setTipoSelecionado] = useState('all')
 
@@ -40,49 +38,97 @@ const App: React.FC = () => {
       setError('')
 
       try {
-        const filtered = allNames.filter(n =>
-          n.name.toLowerCase().includes(search.toLowerCase())
-        )
-
-        const slice = filtered.slice(0, pageSize)
-        const toFetch = slice.filter(s => !detailsCache[s.name])
-
-        if (toFetch.length > 0) {
-          const detailsArr = await Promise.all(
-            toFetch.map(async s => {
-              const r = await fetch(s.url)
-              if (!r.ok) throw new Error('Erro ao buscar detalhe')
-              const info = await r.json()
-              return {
-                name: info.name,
-                image: info.sprites.front_default,
-                types: info.types.map((t: any) => t.type.name),
-                weight: info.weight,
-                height: info.height,
-                abilities: info.abilities,
-                stats: info.stats
-              }
-            })
+        // 🔹 sem filtro de tipo
+        if (tipoSelecionado === 'all') {
+          const filtered = allNames.filter(n =>
+            n.name.toLowerCase().includes(search.toLowerCase())
           )
 
-          setDetailsCache(prev => {
-            const next = { ...prev }
-            detailsArr.forEach(d => { next[d.name] = d })
-            return next
-          })
+          const limit = search ? 20 : pageSize
+          const slice = filtered.slice(0, limit)
+          const toFetch = slice.filter(s => !detailsCache[s.name])
+
+          if (toFetch.length > 0) {
+            const detailsArr = await Promise.all(
+              toFetch.map(async s => {
+                const r = await fetch(s.url)
+                if (!r.ok) throw new Error('Erro ao buscar detalhe')
+                const info = await r.json()
+                return {
+                  name: info.name,
+                  image: info.sprites.front_default,
+                  types: info.types.map((t: any) => t.type.name),
+                  weight: info.weight,
+                  height: info.height,
+                  abilities: info.abilities,
+                  stats: info.stats
+                }
+              })
+            )
+
+            setDetailsCache(prev => {
+              const next = { ...prev }
+              detailsArr.forEach(d => { next[d.name] = d })
+              return next
+            })
+          }
+
+          const finalAssembled = slice
+            .map(s => detailsCache[s.name])
+            .filter(Boolean) as any[]
+
+          setVisiblePokemons(finalAssembled)
         }
 
-        const finalAssembled = slice
-          .map(s => detailsCache[s.name])
-          .filter(Boolean) as any[]
+        // 🔹filtrando por tipo
+        else {
+          const typeRes = await fetch(`https://pokeapi.co/api/v2/type/${tipoSelecionado}`)
+          if (!typeRes.ok) throw new Error('Erro ao buscar tipo')
+          const typeData = await typeRes.json()
+          const allTypePokemon = typeData.pokemon.map((p: any) => p.pokemon)
 
-        const byType = tipoSelecionado === 'all'
-          ? finalAssembled
-          : finalAssembled.filter(p => p.types.includes(tipoSelecionado))
+          const filtered = allTypePokemon.filter((p: any) =>
+            p.name.toLowerCase().includes(search.toLowerCase())
+          )
 
-        setVisiblePokemons(byType)
-      } catch {
+          const limit = search ? 40 : pageSize
+          const slice = filtered.slice(0, limit)
+          const toFetch = slice.filter((s: any) => !detailsCache[s.name])
+
+          if (toFetch.length > 0) {
+            const detailsArr = await Promise.all(
+              toFetch.map(async (s: any) => {
+                const r = await fetch(s.url)
+                if (!r.ok) throw new Error('Erro ao buscar detalhe')
+                const info = await r.json()
+                return {
+                  name: info.name,
+                  image: info.sprites.front_default,
+                  types: info.types.map((t: any) => t.type.name),
+                  weight: info.weight,
+                  height: info.height,
+                  abilities: info.abilities,
+                  stats: info.stats
+                }
+              })
+            )
+
+            setDetailsCache(prev => {
+              const next = { ...prev }
+              detailsArr.forEach(d => { next[d.name] = d })
+              return next
+            })
+          }
+
+          const finalAssembled = slice
+            .map((s: any) => detailsCache[s.name])
+            .filter(Boolean) as any[]
+
+          setVisiblePokemons(finalAssembled)
+        }
+      } catch (err) {
         setError('Erro ao carregar detalhes dos Pokémon.')
+        console.error(err)
       } finally {
         setLoading(false)
       }
@@ -100,16 +146,20 @@ const App: React.FC = () => {
     setError('')
   }
 
-  const handleLoadMore = () => setPageSize(prev => prev + 20)
+  const handleLoadMore = () => setPageSize(prev => prev + 40)
 
   return (
-    <div className="container" 
-    style={{minHeight: '100vh',background: 'linear-gradient(135deg, #000000ff, #670ccfff)',color: '#ffffffff', 
-      padding: '26px', textAlign: 'center' }}>
-
-
-      <h1>Pokédex </h1>
-     
+    <div
+      className="container"
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #000000ff, #670ccfff)',
+        color: '#ffffffff',
+        padding: '26px',
+        textAlign: 'center'
+      }}
+    >
+      <h1>Pokédex</h1>
 
       <SearchBar onSearch={setSearch} />
       <FiltroTipo tipoSelecionado={tipoSelecionado} onTipoChange={setTipoSelecionado} />
@@ -117,10 +167,9 @@ const App: React.FC = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       <PokemonList pokemons={visiblePokemons} onSelect={handleSelect} loading={loading} />
-      
 
       <button
-        onClick={handleLoadMore} 
+        onClick={handleLoadMore}
         disabled={loading}
         style={{
           marginTop: '16px',
